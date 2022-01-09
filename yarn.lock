@@ -433,11 +433,6 @@ inherits@2:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-input-core@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/input-core/-/input-core-2.0.1.tgz#4aa350f4f2b65d34dd6e94745ff9ab6bf0963ef3"
-  integrity sha512-KHx7rZraeQItqJaWThYx6BN/ScfbgtOyeKz48Dl8uM68LfaNtJb7jxhyoh6HYDhvbmrpcN5UE1IiYp0q1xOHuQ==
-
 is-binary-path@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-binary-path/-/is-binary-path-2.1.0.tgz#ea1f7f3b80f064236e83470f86c09c254fb45b09"
@@ -865,13 +860,6 @@ svelte-check@^2.0.0:
     source-map "^0.7.3"
     svelte-preprocess "^4.0.0"
     typescript "*"
-
-svelte-input-mask@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/svelte-input-mask/-/svelte-input-mask-1.1.0.tgz#4591470cabaaa45f156cb5ac9f8040e2b77386c1"
-  integrity sha512-Pvb2bm2AhZGFkKQWp9gaByU4xOdDyI3TEtUGpDtDFzMkf6CIopF8ybL1RgzVGiqo8CcpKUxtupq1p8YUUUAmEw==
-  dependencies:
-    input-core "2.0.1"
 
 svelte-preprocess@^4.0.0:
   version "4.10.1"

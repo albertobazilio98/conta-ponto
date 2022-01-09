@@ -1,63 +1,106 @@
 <main>
   <div class="input-container">
+    <span>Duração da jornada</span>
+    <input type="time" bind:value={baseJourney}>
     {#each turns as _, i}
       <div>
         <span>{i+1}ª entrada</span>
-        <MaskInput alwaysShowMask maskChar="_" mask="00:00" on:change={(value) => handleChange(value, i, 'enter')} />
+        <input type="time" bind:value={turns[i].enter} >
         <span>{i+1}ª saida</span>
-        <MaskInput alwaysShowMask maskChar="_" mask="00:00" on:change={(value) => handleChange(value, i, 'leave')} />
+        <input type="time" bind:value={turns[i].leave} >
       </div>
     {/each}
-    <button on:click={addTurn}>adicionar turno</button>
-    <button on:click={removeTurn}>remover turno</button>
+    {#if !timesAreSequential()}
+      <span class="error">horários invalidos</span>
+    {/if}
     <div>
-      {time()}
+      <button on:click={addTurn}>adicionar turno</button>
+      <button on:click={removeTurn}>remover turno</button>
+    </div>
+    <div>
+      {resultTime()}
     </div>
   </div>
 </main>
 
 <script lang="ts">
-  import MaskInput from "svelte-input-mask/MaskInput.svelte";
-  import { parse, isValid, getUnixTime, format, addSeconds } from 'date-fns'
+  import { parse, isValid, getUnixTime, format, addSeconds, isBefore } from 'date-fns';
 
-  const handleChange = ({ detail }, index, key) => {
-    turns[index][key] = detail.inputState.maskedValue;
-  };
+  const referenceDate = new Date(2022, 0, 6);
+
+  interface turnType {
+    enter: string;
+    leave: string;
+  }
+  interface turnDateType {
+    enter: Date | false;
+    leave: Date | false;
+  }
+
+  let baseJourney = '08:00';
 
   const addTurn = () => {
     turns = [...turns, { enter: '', leave: '' }];
-  }
+  };
 
   const removeTurn = () => {
     turns.pop();
     turns = turns;
-  }
+  };
 
-  let turns = [
+  let turns: turnType[] = [
     { enter: '', leave: '' },
     { enter: '', leave: '' },
   ];
 
-  const parseToDate = (time) => (parse(time, 'HH:mm', new Date()));
+  const parseToDate = (time: string): Date | false => {
+    const date = parse(time, 'HH:mm', referenceDate);
+    return isValid(date) && date;
+  };
+
+  const parseSeconds = (date: Date) => (getUnixTime(date) - getUnixTime(referenceDate))
 
   const countTurn = ({ enter, leave }) => {
     if (isValid(enter) && isValid(leave)) {
-      return getUnixTime(leave) - getUnixTime(enter);
+      return parseSeconds(leave) - parseSeconds(enter);
     }
   };
 
-  $: time = () => {
-    const turnDates = turns.map(({ enter, leave }) => ({ enter: parseToDate(enter), leave: parseToDate(leave) }));
-    const turnTimes = turnDates.map(countTurn);
-    if (turnTimes.every((time) => time)) {
-      const difference = turnTimes.reduce((time, acc) => time + acc, 0)
-      return format(addSeconds(new Date(2022, 0, 6), difference), 'HH:mm')
+  const timesAreFilled = (turns: turnDateType[]) => turns.every(({ enter, leave }) => (enter && leave));
+
+  const isBeforeTime = (first: Date | false, last: Date | false) => {
+    if (first && last) {
+      return isBefore(first, last);
     }
-    // if (dates.every((date) => isValid(date))) {
-    //   const timestamps = dates.map((date) => getUnixTime(date));
-    //   const difference = - timestamps[0] + timestamps[1] + (- timestamps[2] + timestamps[3]);
-    //   return format(addSeconds(new Date(2022, 0, 6), difference), 'HH:mm');
-    // }
+    return true;
+  };
+
+  $: timesAreSequential = () => {
+    let last: Date | false = false;
+    return turnDates.every(({ enter, leave }) => {
+      if (isBeforeTime(last, enter) && isBeforeTime(enter, leave) && isBeforeTime(last, leave)) {
+        last = leave || enter;
+        return true;
+      }
+    })
+  }
+  
+  $: turnDates = turns.map(({ enter, leave }) => ({ enter: parseToDate(enter), leave: parseToDate(leave) }));
+
+  $: baseJourneyDate = parseToDate(baseJourney);
+
+  $: resultTime = () => {
+    if (timesAreSequential() && timesAreFilled(turnDates)) {
+      const turnTimes = turnDates.map(countTurn);
+      const baseJourneySeconds = baseJourneyDate && parseSeconds(baseJourneyDate)
+      const journeySeconds = turnTimes.reduce((time, acc) => time + acc, 0);
+      if (baseJourneySeconds <= journeySeconds) {
+        return `+${format(addSeconds(referenceDate, journeySeconds - baseJourneySeconds), 'HH:mm')}`;
+      } else {
+        return `-${format(addSeconds(referenceDate, baseJourneySeconds - journeySeconds), 'HH:mm')}`;
+      }
+    }
+    return '';
   }
 </script>
 
