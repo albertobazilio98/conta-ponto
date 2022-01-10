@@ -16,6 +16,7 @@
     <div>
       <button on:click={addTurn}>adicionar turno</button>
       <button on:click={removeTurn}>remover turno</button>
+      <button on:click={suggestJourney}>sugerir horarios</button>
     </div>
     <div>
       {resultTime()}
@@ -39,6 +40,39 @@
 
   let baseJourney = '08:00';
 
+  let turns: turnType[] = [
+    { enter: '', leave: '' },
+    { enter: '', leave: '' },
+  ];
+
+  $: timesAreSequential = () => {
+    let last: Date | false = false;
+    return turnDates.every(({ enter, leave }) => {
+      if (isBeforeTime(last, enter) && isBeforeTime(enter, leave) && isBeforeTime(last, leave)) {
+        last = leave || enter;
+        return true;
+      }
+    })
+  }
+
+  $: turnDates = turns.map(({ enter, leave }) => ({ enter: parseToDate(enter), leave: parseToDate(leave) }));
+
+  $: baseJourneyDate = parseToDate(baseJourney);
+
+  $: resultTime = () => {
+    if (timesAreSequential() && timesAreFilled(turnDates)) {
+      const turnTimes = turnDates.map(countTurn);
+      const baseJourneySeconds = baseJourneyDate && parseSeconds(baseJourneyDate)
+      const journeySeconds = turnTimes.reduce((time, acc) => time + acc, 0);
+      if (baseJourneySeconds <= journeySeconds) {
+        return `+${format(addSeconds(referenceDate, journeySeconds - baseJourneySeconds), 'HH:mm')}`;
+      } else {
+        return `-${format(addSeconds(referenceDate, baseJourneySeconds - journeySeconds), 'HH:mm')}`;
+      }
+    }
+    return '';
+  }
+
   const addTurn = () => {
     turns = [...turns, { enter: '', leave: '' }];
   };
@@ -48,10 +82,18 @@
     turns = turns;
   };
 
-  let turns: turnType[] = [
-    { enter: '', leave: '' },
-    { enter: '', leave: '' },
-  ];
+  const suggestJourney = () => {
+    // somente os casos:
+    // - apenas primeiro horario preenchido
+    // - apenas ultimo horario preenchido
+    // - todos menos o ultimo horario preenchidos
+    // - todos menos o primeiro horario preenchidos
+  };
+
+  const hasEmpitySpaces = () => {
+    const toggle = false; 
+    // turns.every(({ enter, leave }) => ())
+  };
 
   const parseToDate = (time: string): Date | false => {
     const date = parse(time, 'HH:mm', referenceDate);
@@ -74,34 +116,6 @@
     }
     return true;
   };
-
-  $: timesAreSequential = () => {
-    let last: Date | false = false;
-    return turnDates.every(({ enter, leave }) => {
-      if (isBeforeTime(last, enter) && isBeforeTime(enter, leave) && isBeforeTime(last, leave)) {
-        last = leave || enter;
-        return true;
-      }
-    })
-  }
-  
-  $: turnDates = turns.map(({ enter, leave }) => ({ enter: parseToDate(enter), leave: parseToDate(leave) }));
-
-  $: baseJourneyDate = parseToDate(baseJourney);
-
-  $: resultTime = () => {
-    if (timesAreSequential() && timesAreFilled(turnDates)) {
-      const turnTimes = turnDates.map(countTurn);
-      const baseJourneySeconds = baseJourneyDate && parseSeconds(baseJourneyDate)
-      const journeySeconds = turnTimes.reduce((time, acc) => time + acc, 0);
-      if (baseJourneySeconds <= journeySeconds) {
-        return `+${format(addSeconds(referenceDate, journeySeconds - baseJourneySeconds), 'HH:mm')}`;
-      } else {
-        return `-${format(addSeconds(referenceDate, baseJourneySeconds - journeySeconds), 'HH:mm')}`;
-      }
-    }
-    return '';
-  }
 </script>
 
 
