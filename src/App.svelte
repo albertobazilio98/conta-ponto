@@ -90,6 +90,7 @@
   $: baseJourneyDate = parseToDate(baseJourney);
 
   $: resultTime = () => {
+    console.log(turns)
     if (timesAreSequential() && timesAreFilled(turnDates)) {
       const turnTimes = turnDates.map(countTurn);
       const baseJourneySeconds = baseJourneyDate && parseSeconds(baseJourneyDate)
