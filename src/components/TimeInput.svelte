@@ -35,7 +35,7 @@
     const value = detail.inputState.maskedValue;
     const date = parseToDate(value);
     ponto = {
-      milisseconds: date && parseSeconds(date),
+      seconds: date && parseSeconds(date),
       value,
       date,
     }

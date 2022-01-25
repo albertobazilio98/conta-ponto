@@ -72,7 +72,7 @@
   let baseJourney: iPontoTime = {
     date: parseToDate('08:00'),
     value: '08:00',
-    milisseconds: parseSeconds(parseToDate('08:00') as Date)
+    seconds: parseSeconds(parseToDate('08:00') as Date)
   }
 
   let turns: turnType[] = [
@@ -102,12 +102,12 @@
 
   $: timeBalance = () => {
     if (timesAreSequential() && timesAreFilled) {
-      const turnTimes = turns.map(({leave, enter}) => leave.milisseconds - enter.milisseconds);
+      const turnTimes = turns.map(({leave, enter}) => leave.seconds - enter.seconds);
       const journeySeconds = turnTimes.reduce((time, acc) => time + acc, 0);
-      if (baseJourney.milisseconds <= journeySeconds) {
-        return `+${format(addSeconds(referenceDate, journeySeconds - baseJourney.milisseconds), 'HH:mm')}`;
+      if (baseJourney.seconds <= journeySeconds) {
+        return `+${format(addSeconds(referenceDate, journeySeconds - baseJourney.seconds), 'HH:mm')}`;
       } else {
-        return `-${format(addSeconds(referenceDate, baseJourney.milisseconds - journeySeconds), 'HH:mm')}`;
+        return `-${format(addSeconds(referenceDate, baseJourney.seconds - journeySeconds), 'HH:mm')}`;
       }
     }
     return '';

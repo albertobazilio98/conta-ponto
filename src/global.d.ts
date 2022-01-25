@@ -1,7 +1,7 @@
 /// <reference types="svelte" />
 
 interface iPontoTime {
-  milisseconds?: number;
+  seconds?: number;
   date: Date | false;
   value: string;
 }
