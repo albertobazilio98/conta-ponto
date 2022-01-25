@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/svelte'
-import { parse, isValid, getUnixTime } from 'date-fns'
 
 import TimeInput from '../components/TimeInput.svelte'
+import { fillInput } from './helpers'
 
 describe('time input timeChange triggering', () => {
   test('should return valid date on valid input', async () => {
@@ -19,18 +19,7 @@ describe('time input timeChange triggering', () => {
       mockEvent(e.detail);
       data = e.detail;
     })
-    await fireEvent.focus(input)
-    await fireEvent.select(input, {
-      target: {
-        selectionStart: 0,
-        selectionEnd: 5,
-      }
-    })
-    await fireEvent.paste(input, {
-      clipboardData: {
-        getData: () => inputedTime
-      }
-    })
+    await fillInput(input, inputedTime)
 
     expect(mockEvent).toBeCalled();
     expect(data.date).toEqual(new Date(2022, 0, 6, 8, 0));
@@ -53,18 +42,7 @@ describe('time input timeChange triggering', () => {
       mockEvent(e.detail);
       data = e.detail;
     })
-    await fireEvent.focus(input)
-    await fireEvent.select(input, {
-      target: {
-        selectionStart: 0,
-        selectionEnd: 5,
-      }
-    })
-    await fireEvent.paste(input, {
-      clipboardData: {
-        getData: () => inputedTime
-      }
-    })
+    await fillInput(input, inputedTime)
 
     expect(mockEvent).toBeCalled();
     expect(data.date).toBeFalsy();
