@@ -8,7 +8,7 @@
 
   import { parse, isValid, getUnixTime } from 'date-fns';
   import MaskInput from "svelte-input-mask";
-  
+
 	const dispatch = createEventDispatcher<{ timeChange: iPontoTime }>();
 
   interface iMaskInputDetail {
@@ -32,7 +32,6 @@
   const referenceDate = new Date(2022, 0, 6);
 
   const setDate = (detail: iMaskInputDetail) => {
-    console.log('chamo aqui')
     const value = detail.inputState.maskedValue;
     const date = parseToDate(value);
     ponto = {

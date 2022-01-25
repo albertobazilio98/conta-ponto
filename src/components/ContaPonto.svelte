@@ -1,31 +1,33 @@
-<div>
+<div class="conta-ponto">
   <TimeInput id="journey-input" label="Duração da jornada" value="08:00" on:change={({ detail }) => setJourney(detail)} />
-  {#each turns as _, i}
-    <div>
-      <TimeInput
-        label={`${i+1}ª entrada`}
-        id={`journey-enter-${i}`}
-        bind:value={turns[i].enter.value}
-        on:change={({ detail }) => setTurn(detail, i, 'enter')}
-      />
-      <TimeInput
-        label={`${i+1}ª saida`}
-        id={`journey-leave-${i}`}
-        bind:value={turns[i].leave.value}
-        on:change={({ detail }) => setTurn(detail, i, 'leave')}
-      />
-    </div>
-  {/each}
+  <div class="input-container">
+    {#each turns as _, i}
+      <div class="turn-container">
+        <TimeInput
+          label={`${i+1}ª entrada`}
+          id={`journey-enter-${i}`}
+          bind:value={turns[i].enter.value}
+          on:timeChange={({ detail }) => setTurn(detail, i, 'enter')}
+        />
+        <TimeInput
+          label={`${i+1}ª saida`}
+          id={`journey-leave-${i}`}
+          bind:value={turns[i].leave.value}
+          on:timeChange={({ detail }) => setTurn(detail, i, 'leave')}
+        />
+      </div>
+    {/each}
+  </div>
   {#if !timesAreSequential()}
     <span class="error">horários invalidos</span>
   {/if}
-  <div>
+  <div class="actions-container">
     <button on:click={addTurn}>adicionar turno</button>
     <button on:click={removeTurn}>remover turno</button>
   </div>
-  <div>
-    {resultTime()}
-  </div>
+  <p class="time-balance">
+    {timeBalance() && `slado: ${timeBalance()}`}
+  </p>
 </div>
 
 <script lang="ts">
@@ -98,7 +100,7 @@
     })
   }
 
-  $: resultTime = () => {
+  $: timeBalance = () => {
     if (timesAreSequential() && timesAreFilled) {
       const turnTimes = turns.map(({leave, enter}) => leave.milisseconds - enter.milisseconds);
       const journeySeconds = turnTimes.reduce((time, acc) => time + acc, 0);
@@ -115,4 +117,22 @@
 
 
 <style lang="scss">
+  .conta-ponto {
+    .time-balance {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .input-container {
+      padding: 1rem;
+
+      .turn-container {
+        margin: 0.5rem;
+      }
+    }
+
+    .actions-container {
+      padding: 0.5rem;
+    }
+  }
 </style>
