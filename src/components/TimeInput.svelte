@@ -1,5 +1,5 @@
 <div class="input-container">
-  <label for={id}>{label}</label>
+  <label class="input-label" for={id}>{label}</label>
   <MaskInput id={id} alwaysShowMask maskChar="_" class="time-input" bind:value={value} mask="00:00" on:change={({ detail }) => setDate(detail)} />
 </div>
 
@@ -56,6 +56,11 @@
 <style lang="scss">
   .input-container {
     display: inline-block;
+
+    .input-label {
+      display: inline-block;
+    }
+
     & :global(.time-input) {
       width: 4rem;
     }

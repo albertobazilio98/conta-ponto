@@ -1,5 +1,6 @@
 <main>
   <h1>Conta ponto</h1>
+  <p>preencha os horarios para calcular qual o seu saldo diário com base na duração da jornada</p>
   <ContaPonto />
 </main>
 
@@ -14,10 +15,6 @@
     padding: 1em;
     max-width: 240px;
     margin: 0 auto;
-    
-    & :global(.time-input) {
-      width: 4rem;
-    }
 
   }
   @media (min-width: 640px) {
