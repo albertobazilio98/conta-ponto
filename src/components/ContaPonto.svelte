@@ -25,7 +25,7 @@
     <button on:click={addTurn}>adicionar turno</button>
     <button on:click={removeTurn}>remover turno</button>
   </div>
-  <p class="time-balance">
+  <p class="time-balance" data-testid="time-balance">
     {timeBalance() && `slado: ${timeBalance()}`}
   </p>
 </div>

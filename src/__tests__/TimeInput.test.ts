@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/svelte'
 
 import TimeInput from '../components/TimeInput.svelte'
-import { fillInput } from './helpers'
+import { fillInput } from '../tesHelpers'
 
 describe('time input timeChange triggering', () => {
   test('should return valid date on valid input', async () => {

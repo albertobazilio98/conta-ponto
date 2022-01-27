@@ -1,6 +1,6 @@
 <div class="input-container">
   <label class="input-label" for={id}>{label}</label>
-  <MaskInput id={id} alwaysShowMask maskChar="_" class="time-input" bind:value={value} mask="00:00" on:change={({ detail }) => setDate(detail)} />
+  <MaskInput id={id} data-testid={id} alwaysShowMask maskChar="_" class="time-input" bind:value={value} mask="00:00" on:change={({ detail }) => setDate(detail)} />
 </div>
 
 <script lang="ts">

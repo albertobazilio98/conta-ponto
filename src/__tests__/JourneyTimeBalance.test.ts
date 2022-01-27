@@ -1,34 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/svelte'
 
 import ContaPonto from '../components/ContaPonto.svelte'
+import { fillInput } from '../tesHelpers'
 
 describe('journey time balance tests', () => {
-  test('positive journey time balance', async () => {
+  test('positive journey time balance with default base journey', async () => {
     const { component } = render(ContaPonto)
-    const input = screen.queryByDisplayValue('__:__')
-    const inputedTime = '08:00'
-    const mockEvent = jest.fn()
-    let data;
-    component.$on('timeChange', (e) => {
-      mockEvent(e.detail);
-      data = e.detail;
-    })
-    await fireEvent.focus(input)
-    await fireEvent.select(input, {
-      target: {
-        selectionStart: 0,
-        selectionEnd: 5,
-      }
-    })
-    await fireEvent.paste(input, {
-      clipboardData: {
-        getData: () => inputedTime
-      }
-    })
-
-    expect(mockEvent).toBeCalled();
-    expect(data.date).toEqual(new Date(2022, 0, 6, 8, 0));
-    expect(data.value).toEqual(inputedTime);
-    expect(data.seconds).toEqual(8 * 60 * 60);
+    const firstEnter = screen.getByTestId('journey-enter-0')
+    const firstLeave = screen.getByTestId('journey-leave-0')
+    const secondEnter = screen.getByTestId('journey-enter-1')
+    const secondLeave = screen.getByTestId('journey-leave-1')
+    await fillInput(firstEnter, '08:00')
+    await fillInput(firstLeave, '12:00')
+    await fillInput(secondEnter, '13:00')
+    await fillInput(secondLeave, '18:00')
+    const timeBalance = screen.queryByTestId('time-balance')
+    expect(timeBalance).toBeInTheDocument()
+    expect(firstEnter).toBeInTheDocument()
+    expect(firstLeave).toBeInTheDocument()
+    expect(secondEnter).toBeInTheDocument()
+    expect(secondLeave).toBeInTheDocument()
   })
 })
