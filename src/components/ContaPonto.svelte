@@ -1,5 +1,10 @@
 <div class="conta-ponto">
-  <TimeInput id="journey-input" label="Duração da jornada" value="08:00" on:change={({ detail }) => setJourney(detail)} />
+  <TimeInput
+    label="Duração da jornada"
+    id="base-journey-input"
+    bind:value={baseJourney.value}
+    on:timeChange={({ detail }) => setJourney(detail)}
+  />
   <div class="input-container">
     {#each turns as _, i}
       <div class="turn-container">
@@ -19,14 +24,17 @@
     {/each}
   </div>
   {#if !timesAreSequential()}
-    <span class="error">horários invalidos</span>
+    <span data-testid="error-times-are-not-sequential" class="error">horários invalidos</span>
   {/if}
   <div class="actions-container">
-    <button on:click={addTurn}>adicionar turno</button>
-    <button on:click={removeTurn}>remover turno</button>
+    <button data-testid="add-turn" on:click={addTurn}>adicionar turno</button>
+    <button data-testid="remove-turn" on:click={removeTurn}>remover turno</button>
   </div>
-  <p class="time-balance" data-testid="time-balance">
-    {timeBalance() && `slado: ${timeBalance()}`}
+  <p class="time-balance">
+    saldo:
+    {#if timeBalance()}
+      <span data-testid="time-balance">{timeBalance()}</span>
+    {/if}
   </p>
 </div>
 
@@ -81,11 +89,11 @@
   ];
 
   const setTurn = (value: iPontoTime, index, key) => {
-    turns[index][key] = value
+    turns[index][key] = value;
   }
 
   const setJourney = (value: iPontoTime) => {
-    baseJourney = value
+    baseJourney = value;
   }
 
   $: timesAreFilled = turns.every(({ enter, leave }) => (enter.date && leave.date));
